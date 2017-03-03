@@ -150,8 +150,9 @@ int bitAnd(int x, int y) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-  return 2;
-
+  int shift = n << 3;
+  int temp = x >> shift;
+  return temp & 0xff;
 }
 /* 
  * logicalShift - shift x to the right by n, using a logical shift
@@ -162,7 +163,7 @@ int getByte(int x, int n) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+  return (~(((1 << 31) >> n) << 1)) & (x >> n);
 }
 /*
  * bitCount - returns count of number of 1's in word
