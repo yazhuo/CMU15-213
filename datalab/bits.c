@@ -173,7 +173,17 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-  return 2;
+	int n = 0x1 | 0x1<<8 | 0x1<<16 | 0x1<<24;
+	int count = 0;
+	count += x&n;
+	count += x>>1&n;
+	count += x>>2&n;
+	count += x>>3&n;
+	count += x>>4&n;
+	count += x>>5&n;
+	count += x>>6&n;
+	count += x>>7&n;
+	return (count&0xf)+(count>>8&0xf)+(count>>16&0xf)+(count>>24&0xf);
 }
 /* 
  * bang - Compute !x without using !
@@ -183,7 +193,7 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 2;
+	return (((x|(~x+1))>>31)&0x01)^0x01;
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -192,7 +202,7 @@ int bang(int x) {
  *   Rating: 1
  */
 int tmin(void) {
-  return 2;
+  return 1 << 31;
 }
 /* 
  * fitsBits - return 1 if x can be represented as an 
@@ -204,7 +214,8 @@ int tmin(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  return 2;
+	int shift = 32+(~n+1);
+	return !(x^((x<<shift)>>shift));
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
@@ -215,7 +226,10 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+	int signx = x>>31;
+	int mask = (1<<n)+(~0);
+	int bias = signx & mask;
+	return (x+bias)>>n;
 }
 /* 
  * negate - return -x 
@@ -225,7 +239,7 @@ int divpwr2(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return (~x)+1;
 }
 /* 
  * isPositive - return 1 if x > 0, return 0 otherwise 
@@ -235,7 +249,7 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-  return 2;
+  return !((x>>31)|(!x));
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -245,7 +259,8 @@ int isPositive(int x) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+	int difference = y + (~x+1);
+	return !(difference>>31);
 }
 /*
  * ilog2 - return floor(log base 2 of x), where x > 0
